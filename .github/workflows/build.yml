@@ -2,14 +2,21 @@ name: Build APK
 on: [push]
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04  # Stable environment for Buildozer
     steps:
       - uses: actions/checkout@v4
+
+      # Fix the "invalid user" issue by making everything owned by the current runner user
+      - name: Fix permissions
+        run: |
+          sudo chown -R $USER:$USER .
+
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
         with:
           command: buildozer android debug
           buildozer_version: stable
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
